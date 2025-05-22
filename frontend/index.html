@@ -19,11 +19,45 @@
 </head>
 <body>
     <h2>Check-In Ticket</h2>
-    <form id="checkinForm">
-        <label for="ticketCode">Ticket Code:</label><br>
-        <input type="text" id="ticketCode" name="ticketCode" required><br>
-        <button type="submit">Check In</button>
-    </form>
+    <form id="registrationForm">
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="text" id="phone" placeholder="Phone Number" required>
+  <select id="ticket_type" required>
+    <option value="">Select Ticket Type</option>
+    <option value="VIP">VIP</option>
+    <option value="Regular">Regular</option>
+  </select>
+  <button type="submit">Register</button>
+</form>
+
+<p id="responseMessage"></p>
+
+<script>
+  document.getElementById('registrationForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", document.getElementById("name").value);
+    formData.append("email", document.getElementById("email").value);
+    formData.append("phone", document.getElementById("phone").value);
+    formData.append("ticket_type", document.getElementById("ticket_type").value);
+
+    fetch("../backend/process_registration.php", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("responseMessage").innerText = data;
+      document.getElementById("registrationForm").reset();
+    })
+    .catch(err => {
+      document.getElementById("responseMessage").innerText = "Error submitting form.";
+    });
+  });
+</script>
+
     <div id="message"></div>
 
     <script>
