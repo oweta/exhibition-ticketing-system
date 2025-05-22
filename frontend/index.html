@@ -1,84 +1,96 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Exhibition Attendance Check-In</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            padding: 20px;
-        }
-        input, button {
-            padding: 10px;
-            margin: 10px 0;
-        }
-        #message {
-            margin-top: 20px;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        padding: 20px;
+      }
+      input,
+      button {
+        padding: 10px;
+        margin: 10px 0;
+      }
+      #message {
+        margin-top: 20px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h2>Check-In Ticket</h2>
     <form id="registrationForm">
-  <input type="text" id="name" placeholder="Full Name" required>
-  <input type="email" id="email" placeholder="Email" required>
-  <input type="text" id="phone" placeholder="Phone Number" required>
-  <select id="ticket_type" required>
-    <option value="">Select Ticket Type</option>
-    <option value="VIP">VIP</option>
-    <option value="Regular">Regular</option>
-  </select>
-  <button type="submit">Register</button>
-</form>
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="phone" placeholder="Phone Number" required />
+      <select id="ticket_type" required>
+        <option value="">Select Ticket Type</option>
+        <option value="VIP">VIP</option>
+        <option value="Regular">Regular</option>
+      </select>
+      <button type="submit">Register</button>
+    </form>
 
-<p id="responseMessage"></p>
+    <p id="responseMessage"></p>
 
-<script>
-  document.getElementById('registrationForm').addEventListener('submit', function (e) {
-    e.preventDefault();
+    <script>
+      document
+        .getElementById("registrationForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", document.getElementById("name").value);
-    formData.append("email", document.getElementById("email").value);
-    formData.append("phone", document.getElementById("phone").value);
-    formData.append("ticket_type", document.getElementById("ticket_type").value);
+          const formData = new FormData();
+          formData.append("name", document.getElementById("name").value);
+          formData.append("email", document.getElementById("email").value);
+          formData.append("phone", document.getElementById("phone").value);
+          formData.append(
+            "ticket_type",
+            document.getElementById("ticket_type").value
+          );
 
-    fetch("../backend/process_registration.php", {
-      method: "POST",
-      body: formData
-    })
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById("responseMessage").innerText = data;
-      document.getElementById("registrationForm").reset();
-    })
-    .catch(err => {
-      document.getElementById("responseMessage").innerText = "Error submitting form.";
-    });
-  });
-</script>
+          fetch("http://localhost:8000/backend/process_registration.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((res) => res.text())
+            .then((data) => {
+              document.getElementById("responseMessage").innerText = data;
+              document.getElementById("registrationForm").reset();
+            })
+            .catch((err) => {
+              document.getElementById("responseMessage").innerText =
+                "Error submitting form.";
+            });
+        });
+    </script>
 
     <div id="message"></div>
 
     <script>
-        document.getElementById("checkinForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
-            const ticketCode = document.getElementById("ticketCode").value;
+      document
+        .getElementById("checkinForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const ticketCode = document.getElementById("ticketCode").value;
 
-            const response = await fetch("../backend/attendance/record_attendance.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ticket_code: ticketCode })
-            });
-
-            const result = await response.json();
-            const messageDiv = document.getElementById("message");
-            if (result.error) {
-                messageDiv.innerHTML = `<span style="color:red;">${result.error}</span>`;
-            } else {
-                messageDiv.innerHTML = `<span style="color:green;">${result.message}</span>`;
+          const response = await fetch(
+            "../backend/attendance/record_attendance.php",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ticket_code: ticketCode }),
             }
+          );
+
+          const result = await response.json();
+          const messageDiv = document.getElementById("message");
+          if (result.error) {
+            messageDiv.innerHTML = `<span style="color:red;">${result.error}</span>`;
+          } else {
+            messageDiv.innerHTML = `<span style="color:green;">${result.message}</span>`;
+          }
         });
     </script>
-</body>
+  </body>
 </html>
