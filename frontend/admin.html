@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel - Exhibition Attendance</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    input[type="text"] {
+      padding: 6px;
+      width: 200px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar button {
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <h2>Admin Panel - Registered Attendees</h2>
+    <input type="text" id="searchInput" placeholder="Search by name..." onkeyup="searchTable()">
+  </div>
+
+  <table id="attendeeTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Ticket Type</th>
+        <th>Checked In</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Attendee rows will be inserted here dynamically -->
+    </tbody>
+  </table>
+
+  <script>
+    // Placeholder attendee data (you’ll later fetch from PHP + DB)
+    const attendees = [
+      { name: "Alice", email: "alice@example.com", phone: "12345", ticket: "VIP", checked: "Yes" },
+      { name: "Bob", email: "bob@example.com", phone: "54321", ticket: "Regular", checked: "No" }
+    ];
+
+    function loadTable() {
+      const tbody = document.querySelector("#attendeeTable tbody");
+      tbody.innerHTML = "";
+      attendees.forEach(a => {
+        const row = `<tr>
+          <td>${a.name}</td>
+          <td>${a.email}</td>
+          <td>${a.phone}</td>
+          <td>${a.ticket}</td>
+          <td>${a.checked}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function searchTable() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#attendeeTable tbody tr");
+      rows.forEach(row => {
+        const name = row.children[0].textContent.toLowerCase();
+        row.style.display = name.includes(input) ? "" : "none";
+      });
+    }
+
+    window.onload = loadTable;
+  </script>
+
+</body>
+</html>
