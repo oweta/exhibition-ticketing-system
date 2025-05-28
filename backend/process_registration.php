@@ -1,4 +1,9 @@
 <?php
+echo "Loading DB config...<br>";
+require_once __DIR__ . '/../database/connection.php';
+echo "Connected to DB!<br>";
+exit;
+
 // Enable CORS if you're testing from different ports
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
