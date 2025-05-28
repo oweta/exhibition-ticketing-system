@@ -68,29 +68,32 @@
     <div id="message"></div>
 
     <script>
-      document
-        .getElementById("checkinForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          const ticketCode = document.getElementById("ticketCode").value;
+  document
+    .getElementById("registrationForm")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
 
-          const response = await fetch(
-            "../backend/process_registration.php",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ ticket_code: ticketCode }),
-            }
-          );
+      const formData = new FormData();
+      formData.append("name", document.getElementById("name").value);
+      formData.append("email", document.getElementById("email").value);
+      formData.append("phone", document.getElementById("phone").value);
+      formData.append("ticket_type", document.getElementById("ticket_type").value);
 
-          const result = await response.json();
-          const messageDiv = document.getElementById("message");
-          if (result.error) {
-            messageDiv.innerHTML = `<span style="color:red;">${result.error}</span>`;
-          } else {
-            messageDiv.innerHTML = `<span style="color:green;">${result.message}</span>`;
-          }
+      fetch("../backend/process_registration.php", {
+        method: "POST",
+        body: formData,
+      })
+        .then((res) => res.text())
+        .then((data) => {
+          document.getElementById("responseMessage").innerText = data;
+          document.getElementById("registrationForm").reset();
+        })
+        .catch((err) => {
+          document.getElementById("responseMessage").innerText =
+            "Error submitting form.";
         });
-    </script>
+    });
+</script>
+
   </body>
 </html>
