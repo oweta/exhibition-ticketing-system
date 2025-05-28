@@ -1,12 +1,12 @@
 <?php
-$host = 'localhost';
+$host = 'localhost';      // or 127.0.0.1
 $db   = 'exhibition_db';
 $user = 'root';
-$pass = ''; // leave it blank as you said
-$charset = 'utf8mb4';
+$pass = '';               // Leave empty for default XAMPP setup
 
 try {
     $conn = new mysqli($host, $user, $pass, $db);
+
     if ($conn->connect_error) {
         throw new Exception("Connection failed: " . $conn->connect_error);
     }
