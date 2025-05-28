@@ -75,7 +75,7 @@
           const ticketCode = document.getElementById("ticketCode").value;
 
           const response = await fetch(
-            "../backend/attendance/record_attendance.php",
+            "http://localhost/exhibition-ticketing-system/backend/users/process_registration.php",
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
