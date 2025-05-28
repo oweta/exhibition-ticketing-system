@@ -1,11 +1,9 @@
 <?php
-$host = 'localhost';      // or 127.0.0.1
+$host = 'localhost';
 $db   = 'exhibition_db';
-$user = 'root';           // your MySQL username
-$pass = '';               // your MySQL password (leave blank for XAMPP default)
+$user = 'root';
+$pass = ''; // leave it blank as you said
 $charset = 'utf8mb4';
-
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 
 try {
     $conn = new mysqli($host, $user, $pass, $db);
