@@ -1,9 +1,5 @@
 <?php
-echo "Loading DB config...<br>";
-require_once __DIR__ . '/../database/connection.php';
-echo "Connected to DB!<br>";
-
-// Enable CORS if you're testing from different ports
+// Enable CORS
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Content-Type: application/json");
@@ -18,7 +14,7 @@ $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
 $ticket_type = isset($_POST['ticket_type']) ? trim($_POST['ticket_type']) : '';
 
 // Step 3: Simple validation
-if (empty($name) || empty($email) || empty($phone) || empty($ticket_type)) {
+if (empty($full_name) || empty($email) || empty($phone) || empty($ticket_type)) {
     echo json_encode(["success" => false, "message" => "All fields are required."]);
     exit;
 }
@@ -36,3 +32,4 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+?>
