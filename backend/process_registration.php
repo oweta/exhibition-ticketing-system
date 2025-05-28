@@ -5,7 +5,7 @@ header("Access-Control-Allow-Methods: POST");
 header("Content-Type: application/json");
 
 // Step 1: Include database connection
-require_once(__DIR__ . "/../database/connection.php");
+require_once __DIR__ . '/../database/connection.php';
 
 // Step 2: Capture and sanitize POST data
 $name = isset($_POST['name']) ? trim($_POST['name']) : '';
