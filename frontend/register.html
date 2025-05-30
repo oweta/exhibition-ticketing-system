@@ -31,6 +31,7 @@
     <input type="text" id="name" placeholder="Full Name" required />
     <input type="email" id="email" placeholder="Email" required />
     <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
     <button type="submit">Register</button>
   </form>
 
@@ -41,10 +42,22 @@
     document.getElementById("registerForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const message = document.getElementById("registerMessage");
+
+      // Client-side password match validation
+      if (password !== confirmPassword) {
+        message.innerText = "Passwords do not match.";
+        return;
+      }
+
       const formData = new FormData();
-      formData.append("name", document.getElementById("name").value);
-      formData.append("email", document.getElementById("email").value);
-      formData.append("password", document.getElementById("password").value);
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
 
       fetch("../backend/users/register.php", {
         method: "POST",
@@ -53,13 +66,13 @@
         .then(res => res.text())
         .then(data => {
           if (data.trim() === "success") {
-            window.location.href = "login.html"; // redirect to login after registration
+            window.location.href = "login.html"; // redirect to login
           } else {
-            document.getElementById("registerMessage").innerText = data;
+            message.innerText = data;
           }
         })
         .catch(err => {
-          document.getElementById("registerMessage").innerText = "Registration error.";
+          message.innerText = "Registration error.";
         });
     });
   </script>

@@ -1,20 +1,53 @@
 <?php
-require_once '../db/connection.php';
+// Connect to your database
+$host = "localhost";
+$user = "root";
+$pass = ""; // default for XAMPP
+$db = "exhibition_system"; // make sure this matches your database name
 
-// Get user input
-$data = json_decode(file_get_contents("php://input"), true);
+$conn = new mysqli($host, $user, $pass, $db);
 
-$full_name = $data['full_name'];
-$email = $data['email'];
-$password = password_hash($data['password'], PASSWORD_BCRYPT);
-$role = isset($data['role']) ? $data['role'] : 'customer';
-
-try {
-    $stmt = $conn->prepare("INSERT INTO users (full_name, email, password, role) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$full_name, $email, $password, $role]);
-
-    echo json_encode(["message" => "User registered successfully."]);
-} catch (PDOException $e) {
-    echo json_encode(["error" => "Registration failed: " . $e->getMessage()]);
+// Check DB connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
 }
+
+// Get data from request
+$name = $_POST['name'] ?? '';
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
+
+// Validate inputs
+if (empty($name) || empty($email) || empty($password)) {
+  echo "All fields are required.";
+  exit;
+}
+
+// Check if email already exists
+$sql = "SELECT * FROM officials WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+  echo "Email is already registered.";
+  exit;
+}
+
+// Hash password
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+// Insert new official
+$insert = "INSERT INTO officials (name, email, password) VALUES (?, ?, ?)";
+$stmt = $conn->prepare($insert);
+$stmt->bind_param("sss", $name, $email, $hashedPassword);
+
+if ($stmt->execute()) {
+  echo "success";
+} else {
+  echo "Registration failed. Try again.";
+}
+
+$conn->close();
 ?>
