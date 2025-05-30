@@ -1,53 +1,40 @@
 <?php
-// Connect to your database
-$host = "localhost";
-$user = "root";
-$pass = ""; // default for XAMPP
-$db = "exhibition_system"; // make sure this matches your database name
+// Include the database connection file
+require_once '../database/connection.php'; // adjust the path if needed
 
-$conn = new mysqli($host, $user, $pass, $db);
+// Handle POST request
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get and sanitize form inputs
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-// Check DB connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
+    if (empty($name) || empty($email) || empty($password)) {
+        echo "All fields are required.";
+        exit;
+    }
 
-// Get data from request
-$name = $_POST['name'] ?? '';
-$email = $_POST['email'] ?? '';
-$password = $_POST['password'] ?? '';
+    try {
+        // Check if email already exists
+        $stmt = $pdo->prepare("SELECT id FROM officials WHERE email = ?");
+        $stmt->execute([$email]);
 
-// Validate inputs
-if (empty($name) || empty($email) || empty($password)) {
-  echo "All fields are required.";
-  exit;
-}
+        if ($stmt->rowCount() > 0) {
+            echo "Email already registered.";
+            exit;
+        }
 
-// Check if email already exists
-$sql = "SELECT * FROM officials WHERE email = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
+        // Hash the password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-if ($result->num_rows > 0) {
-  echo "Email is already registered.";
-  exit;
-}
+        // Insert official into the database
+        $stmt = $pdo->prepare("INSERT INTO officials (name, email, password) VALUES (?, ?, ?)");
+        $stmt->execute([$name, $email, $hashed_password]);
 
-// Hash password
-$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-// Insert new official
-$insert = "INSERT INTO officials (name, email, password) VALUES (?, ?, ?)";
-$stmt = $conn->prepare($insert);
-$stmt->bind_param("sss", $name, $email, $hashedPassword);
-
-if ($stmt->execute()) {
-  echo "success";
+        echo "success"; // front-end checks for this
+    } catch (PDOException $e) {
+        echo "Registration failed: " . $e->getMessage();
+    }
 } else {
-  echo "Registration failed. Try again.";
+    echo "Invalid request method.";
 }
-
-$conn->close();
-?>
