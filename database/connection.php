@@ -3,7 +3,7 @@ $host = '127.0.0.1';
 $port = '3307'; // <-- Important: XAMPP is using port 3307
 $db   = 'exhibition_db';
 $user = 'root';
-$pass = 'YOUR_PASSWORD'; // Replace with the password you set for root
+$pass = '@OwetaJacobEmmy440';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";
