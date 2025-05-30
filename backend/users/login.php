@@ -1,33 +1,33 @@
 <?php
-require_once '../db/connection.php';
+session_start();
+require_once '../../database/connection.php'; // Adjust path to your connection file
 
-// Get JSON input
-$data = json_decode(file_get_contents("php://input"), true);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-$email = $data['email'];
-$password = $data['password'];
-
-try {
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($password, $user['password'])) {
-        // Login successful
-        echo json_encode([
-            "message" => "Login successful.",
-            "user" => [
-                "id" => $user['id'],
-                "name" => $user['full_name'],
-                "email" => $user['email'],
-                "role" => $user['role']
-            ]
-        ]);
-    } else {
-        // Login failed
-        echo json_encode(["error" => "Invalid email or password."]);
+    if (empty($email) || empty($password)) {
+        echo "Email and password are required.";
+        exit;
     }
-} catch (PDOException $e) {
-    echo json_encode(["error" => "Login error: " . $e->getMessage()]);
+
+    try {
+        // Fetch official by email
+        $stmt = $pdo->prepare("SELECT * FROM officials WHERE email = ?");
+        $stmt->execute([$email]);
+        $official = $stmt->fetch();
+
+        if ($official && password_verify($password, $official['password'])) {
+            // Password is correct, start session
+            $_SESSION['official_id'] = $official['id'];
+            $_SESSION['official_name'] = $official['name'];
+            echo "success"; // Signal to frontend that login worked
+        } else {
+            echo "Invalid email or password.";
+        }
+    } catch (PDOException $e) {
+        echo "Login failed: " . $e->getMessage();
+    }
+} else {
+    echo "Invalid request method.";
 }
-?>
